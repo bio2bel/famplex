@@ -3,9 +3,11 @@
 
 """Convert famplex equivalences to BEL Statements."""
 
+import click
 import pandas as pd
 import pybel
 from pybel.dsl import protein, named_complex_abundance
+import sys
 
 FPLXEQ = 'https://raw.githubusercontent.com/sorgerlab/famplex/master/equivalences.csv'
 
@@ -75,12 +77,14 @@ def build_graph(df):
     return graph
 
 
-def main():
+@click.command()
+@click.option("-f", "--file", type=click.File("w"), help="A file to write famplex equivalences to BEL",
+              default=sys.stdout)
+def main(file):
     """Provide BEL Statements from BEL graph."""
     df = get_df()
     graph = build_graph(df)
-    with open("famplex_equivalences.bel", "w") as file:
-        pybel.to_bel(graph, file)
+    pybel.to_bel(graph, file)
 
 
 if __name__ == '__main__':
