@@ -5,3 +5,5 @@
 This repository contains utilities for downloading, parsing, and serializing
 `FamPlex <http://github.com/sorgerlab/famplex>`_ to BEL.
 """
+
+from bio2bel_famplex.relations import *
