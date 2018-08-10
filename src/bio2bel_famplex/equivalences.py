@@ -3,20 +3,21 @@
 
 """Convert famplex equivalences to BEL Statements."""
 
+import sys
+
 import click
 import pandas as pd
 import pybel
-from pybel.dsl import protein, named_complex_abundance
-import sys
+from pybel.dsl import named_complex_abundance, protein
 
-FPLXEQ = 'https://raw.githubusercontent.com/sorgerlab/famplex/master/equivalences.csv'
+from bio2bel_famplex.constants import EQUIVALENCES_URL
 
 
 def get_df():
     """Get famplex relations as a Pandas dataframe.
     :rtype: pandas.DataFrame
     """
-    return pd.read_csv(FPLXEQ, header=None)
+    return pd.read_csv(EQUIVALENCES_URL, header=None)
 
 
 famplex_to_identifiers = {

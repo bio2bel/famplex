@@ -6,9 +6,9 @@
 import pandas as pd
 import pybel
 from pybel.constants import HAS_MEMBER
-from pybel.dsl import protein, named_complex_abundance
+from pybel.dsl import named_complex_abundance, protein
 
-FPLX = 'https://raw.githubusercontent.com/sorgerlab/famplex/master/relations.csv'
+from bio2bel_famplex.constants import RELATIONS_URL
 
 
 def get_df():
@@ -16,7 +16,7 @@ def get_df():
 
     :rtype: pandas.DataFrame
     """
-    return pd.read_csv(FPLX, header=None)
+    return pd.read_csv(RELATIONS_URL, header=None)
 
 
 def build_graph(df):
