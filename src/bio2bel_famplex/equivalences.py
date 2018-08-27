@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Convert famplex equivalences to BEL Statements."""
+"""Convert FamPlex equivalences to BEL Statements."""
 
 import sys
 
 import click
 import pandas as pd
+
 import pybel
+from bio2bel_famplex.constants import EQUIVALENCES_URL
+from pybel import BELGraph
 from pybel.dsl import named_complex_abundance, protein
 
-from bio2bel_famplex.constants import EQUIVALENCES_URL
 
-
-def get_df():
-    """Get famplex relations as a Pandas dataframe.
-    :rtype: pandas.DataFrame
-    """
+def get_df() -> pd.DataFrame:
+    """Get FamPlex relations as a Pandas dataframe."""
     return pd.read_csv(EQUIVALENCES_URL, header=None)
 
 
@@ -37,14 +36,12 @@ famplex_to_belns = {
 }
 
 
-def build_graph(df):
+def build_graph(df: pd.DataFrame) -> BELGraph:
     """Build a BEL Graph from a famplex dataframe.
 
     :param df: A Pandas dataframe representing famplex equivalences
-    :type df: pandas.DataFrame
-    :rtype: pybel.BELGraph
     """
-    graph = pybel.BELGraph(name="Famplex_Equivalences", version="0.0.1", authors="Kristian Kolpeja")
+    graph = BELGraph(name="Famplex_Equivalences", version="0.0.1", authors="Kristian Kolpeja")
     graph.namespace_url.update(famplex_to_belns)
 
     graph.namespace_pattern.update({
@@ -75,6 +72,7 @@ def build_graph(df):
         famplex = func('FPLX', famplex_name)
 
         graph.add_equivalence(external, famplex)
+
     return graph
 
 

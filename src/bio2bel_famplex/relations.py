@@ -4,11 +4,11 @@
 """Convert FamPlex relations to BEL Statements."""
 
 import pandas as pd
-from pybel import BELGraph, to_bel
-from pybel.constants import HAS_MEMBER, NAME, NAMESPACE
-from pybel.dsl import named_complex_abundance, protein
 
 from bio2bel_famplex.constants import RELATIONS_URL
+from pybel import BELGraph, to_bel
+from pybel.constants import HAS_MEMBER, NAME, NAMESPACE
+from pybel.dsl import BaseEntity, named_complex_abundance, protein
 
 __all__ = ["enrich_graph", "build_graph"]
 
@@ -26,20 +26,19 @@ def get_df() -> pd.DataFrame:
 def enrich_graph(graph: BELGraph):
     """Find FamPlexes and their members in the graph and enrich them."""
     df = get_df()
-    for node in list(graph):
-        node_data = graph.node[node]
-        if is_famplex_node(node_data):
-            subdf = look_up(df, node_data)
+    for _, node in list(graph.nodes(data=True)):
+        if is_famplex_node(node):
+            subdf = look_up(df, node)
             append_graph(subdf, graph)
 
 
-def is_famplex_node(node_data: dict) -> bool:
+def is_famplex_node(node: BaseEntity) -> bool:
     """Check if this is a node that can be enriched with FamPlex relations.
 
     - Does this node have the FamPlex namespace?
     - Does this node have the HGNC namespace?
     """
-    namespace = node_data.get(NAMESPACE)
+    namespace = node.get(NAMESPACE)
 
     return (
             namespace is not None and
@@ -47,9 +46,9 @@ def is_famplex_node(node_data: dict) -> bool:
     )
 
 
-def look_up(df: pd.DataFrame, node_data: dict):
+def look_up(df: pd.DataFrame, node: BaseEntity):
     """Get a subset of a DataFrame relevant to this node."""
-    name = node_data.get(NAME)
+    name = node.get(NAME)
     return df[(df[1] == name) | (df[4] == name)]
 
 
