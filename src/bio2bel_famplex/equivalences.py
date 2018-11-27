@@ -2,9 +2,10 @@
 
 """Convert FamPlex equivalences to BEL Statements."""
 
+import sys
+
 import click
 import pandas as pd
-import sys
 
 import pybel
 from pybel import BELGraph
@@ -19,12 +20,12 @@ def get_equivalences_df() -> pd.DataFrame:
 
 famplex_to_identifiers = {
     "ECCODE": ("eccode", r"^\d+\.-\.-\.-|\d+\.\d+\.-\.-|\d+\.\d+\.\d+\.-|\d+\.\d+\.\d+\.(n)?\d+$"),
-    "GO": ("go", "^GO:\d{7}$"),
-    "IP": ("interpro", "^IPR\d{6}$"),
-    "MESH": ("mesh", "^(C|D)\d{6}$"),
-    "NCIT": ("ncit", "^C\d+$"),
-    "PF": ("pfam", "^PF\d{5}$"),
-    "RE": ("reactome", "(^R-[A-Z]{3}-\d+(-\d+)?(\.\d+)?$)|(^REACT_\d+(\.\d+)?$)")
+    "GO": ("go", r"^GO:\d{7}$"),
+    "IP": ("interpro", r"^IPR\d{6}$"),
+    "MESH": ("mesh", r"^(C|D)\d{6}$"),
+    "NCIT": ("ncit", r"^C\d+$"),
+    "PF": ("pfam", r"^PF\d{5}$"),
+    "RE": ("reactome", r"(^R-[A-Z]{3}-\d+(-\d+)?(\.\d+)?$)|(^REACT_\d+(\.\d+)?$)")
 }
 
 famplex_to_belns = {
@@ -35,7 +36,7 @@ famplex_to_belns = {
 
 
 def build_equivalences_graph(df: pd.DataFrame) -> BELGraph:
-    """Build a BEL Graph from a famplex dataframe.
+    """Build a BEL Graph from a FamPlex dataframe.
 
     :param df: A Pandas dataframe representing famplex equivalences
     """
@@ -49,6 +50,7 @@ def build_equivalences_graph(df: pd.DataFrame) -> BELGraph:
 
 
 def append_equivalences_graph(df: pd.DataFrame, graph: BELGraph) -> None:
+    """Append equivalence relations to the graph."""
     graph.namespace_url.update(famplex_to_belns)
     graph.namespace_pattern.update({
         identifiers_key: pattern

@@ -5,12 +5,15 @@
 
 import pandas as pd
 
-from bio2bel_famplex.constants import RELATIONS_URL
 from pybel import BELGraph, to_bel
-from pybel.constants import HAS_MEMBER, NAME, NAMESPACE
+from pybel.constants import NAME, NAMESPACE
 from pybel.dsl import BaseEntity, named_complex_abundance, protein
+from .constants import RELATIONS_URL
 
-__all__ = ["enrich_graph", "build_relations_graph"]
+__all__ = [
+    "enrich_graph",
+    "build_relations_graph",
+]
 
 NAMESPACES = {
     "HGNC": "https://arty.scai.fraunhofer.de/artifactory/bel/namespace/hgnc/hgnc-20180215.belns",
@@ -39,11 +42,7 @@ def is_famplex_node(node: BaseEntity) -> bool:
     - Does this node have the HGNC namespace?
     """
     namespace = node.get(NAMESPACE)
-
-    return (
-            namespace is not None and
-            namespace.lower() in {'famplex', 'fplx', 'hgnc'}
-    )
+    return namespace is not None and namespace.lower() in {'famplex', 'fplx', 'hgnc'}
 
 
 def look_up(df: pd.DataFrame, node: BaseEntity):
