@@ -10,7 +10,7 @@ from pybel import BELGraph, to_bel
 from pybel.constants import HAS_MEMBER, NAME, NAMESPACE
 from pybel.dsl import BaseEntity, named_complex_abundance, protein
 
-__all__ = ["enrich_graph", "build_graph"]
+__all__ = ["enrich_graph", "build_relations_graph"]
 
 NAMESPACES = {
     "HGNC": "https://arty.scai.fraunhofer.de/artifactory/bel/namespace/hgnc/hgnc-20180215.belns",
@@ -18,18 +18,18 @@ NAMESPACES = {
 }
 
 
-def get_df() -> pd.DataFrame:
+def get_relations_df() -> pd.DataFrame:
     """Get FamPlex relations as a DataFrame."""
     return pd.read_csv(RELATIONS_URL, header=None)
 
 
 def enrich_graph(graph: BELGraph):
     """Find FamPlexes and their members in the graph and enrich them."""
-    df = get_df()
+    df = get_relations_df()
     for _, node in list(graph.nodes(data=True)):
         if is_famplex_node(node):
             subdf = look_up(df, node)
-            append_graph(subdf, graph)
+            append_relations_graph(subdf, graph)
 
 
 def is_famplex_node(node: BaseEntity) -> bool:
@@ -52,7 +52,7 @@ def look_up(df: pd.DataFrame, node: BaseEntity):
     return df[(df[1] == name) | (df[4] == name)]
 
 
-def build_graph(df: pd.DataFrame) -> BELGraph:
+def build_relations_graph(df: pd.DataFrame) -> BELGraph:
     """Build a BEL Graph from a FamPlex DataFrame.
 
     :param df: A DataFrame representing famplex relations
@@ -62,11 +62,11 @@ def build_graph(df: pd.DataFrame) -> BELGraph:
         version="0.0.1",
         authors="Kristian Kolpeja and Charles Tapley Hoyt",
     )
-    append_graph(df, graph)
+    append_relations_graph(df, graph)
     return graph
 
 
-def append_graph(df: pd.DataFrame, graph: BELGraph):
+def append_relations_graph(df: pd.DataFrame, graph: BELGraph):
     """Append FamPlex relations to the graph."""
     graph.namespace_url.update(NAMESPACES)
 
@@ -82,13 +82,13 @@ def append_graph(df: pd.DataFrame, graph: BELGraph):
 
         else:  # partof
             obj = named_complex_abundance(ns2, n2)
-            graph.add_unqualified_edge(obj, sub, HAS_MEMBER)
+            graph.add_has_member(obj, sub)
 
 
 def main():
     """Provide BEL Statements from BEL graph."""
-    df = get_df()
-    graph = build_graph(df)
+    df = get_relations_df()
+    graph = build_relations_graph(df)
     with open("famplex.bel", "w") as file:
         to_bel(graph, file)
 

@@ -1,20 +1,18 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """Convert FamPlex equivalences to BEL Statements."""
 
-import sys
-
 import click
 import pandas as pd
+import sys
 
 import pybel
-from bio2bel_famplex.constants import EQUIVALENCES_URL
 from pybel import BELGraph
 from pybel.dsl import named_complex_abundance, protein
+from .constants import EQUIVALENCES_URL
 
 
-def get_df() -> pd.DataFrame:
+def get_equivalences_df() -> pd.DataFrame:
     """Get FamPlex relations as a Pandas dataframe."""
     return pd.read_csv(EQUIVALENCES_URL, header=None)
 
@@ -36,14 +34,22 @@ famplex_to_belns = {
 }
 
 
-def build_graph(df: pd.DataFrame) -> BELGraph:
+def build_equivalences_graph(df: pd.DataFrame) -> BELGraph:
     """Build a BEL Graph from a famplex dataframe.
 
     :param df: A Pandas dataframe representing famplex equivalences
     """
-    graph = BELGraph(name="Famplex_Equivalences", version="0.0.1", authors="Kristian Kolpeja")
-    graph.namespace_url.update(famplex_to_belns)
+    graph = BELGraph(
+        name="Famplex_Equivalences",
+        version="0.0.1",
+        authors="Kristian Kolpeja",
+    )
+    append_equivalences_graph(df, graph)
+    return graph
 
+
+def append_equivalences_graph(df: pd.DataFrame, graph: BELGraph) -> None:
+    graph.namespace_url.update(famplex_to_belns)
     graph.namespace_pattern.update({
         identifiers_key: pattern
         for _, (identifiers_key, pattern) in famplex_to_identifiers.items()
@@ -73,16 +79,14 @@ def build_graph(df: pd.DataFrame) -> BELGraph:
 
         graph.add_equivalence(external, famplex)
 
-    return graph
-
 
 @click.command()
-@click.option("-f", "--file", type=click.File("w"), help="A file to write famplex equivalences to BEL",
+@click.option("-f", "--file", type=click.File('w'), help="A file to write FamPlex equivalences to BEL",
               default=sys.stdout)
 def main(file):
     """Provide BEL Statements from BEL graph."""
-    df = get_df()
-    graph = build_graph(df)
+    df = get_equivalences_df()
+    graph = build_equivalences_graph(df)
     pybel.to_bel(graph, file)
 
 
