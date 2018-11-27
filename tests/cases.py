@@ -24,4 +24,4 @@ class TemporaryCacheClass(AbstractTemporaryCacheClassMixin):
     @classmethod
     def populate(cls):
         """Populate the Bio2BEL FamPlex database with test data."""
-        raise NotImplementedError
+        ...
