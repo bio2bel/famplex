@@ -2,7 +2,7 @@
 
 """Constants for Bio2BEL FamPlex."""
 
-VERSION = '0.0.1-dev'
+VERSION = '0.0.1'
 
 
 def get_version() -> str:
