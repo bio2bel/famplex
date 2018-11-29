@@ -1,5 +1,5 @@
-Bio2BEL FamPlex |build|
-=======================
+Bio2BEL FamPlex |build| |coverage| |documentation| |zenodo|
+===========================================================
 Protein complex and family hierarchies from FamPlex.
 
 Installation |pypi_version| |python_versions| |pypi_license|
@@ -51,3 +51,7 @@ Python REPL
 
 .. |pypi_license| image:: https://img.shields.io/pypi/l/bio2bel_famplex.svg
     :alt: MIT License
+
+.. |zenodo| image:: https://zenodo.org/badge/135121081.svg
+    :target: https://zenodo.org/badge/latestdoi/135121081
+    :alt: Zenodo DOI
