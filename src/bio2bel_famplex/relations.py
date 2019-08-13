@@ -13,6 +13,7 @@ from .constants import RELATIONS_URL
 __all__ = [
     "enrich_graph",
     "build_relations_graph",
+    'get_relations_df',
 ]
 
 NAMESPACES = {
